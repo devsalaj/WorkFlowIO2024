@@ -1,0 +1,225 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.8em;
+  margin: 0;
+}
+
+header nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 1em;
+  margin-left: 20px;
+}
+
+header nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+footer {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  position: bottom;
+  bottom: 0;
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  margin-bottom: 20px;
+}
+
+ul li a {
+  text-decoration: none;
+  color: #007BFF;
+  font-size: 1.2em;
+  transition: color 0.3s ease;
+}
+
+ul li a:hover {
+  color: #0056b3;
+}
+
+/* Styles for Enter Transaction Form */
+form div {
+  margin-bottom: 20px;
+  
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.sub-div-transaction-form {
+  width: 95%;
+ 
+  padding: 5px;
+  
+
+}
+
+/* Ensure input and select fields take full width */
+form input[type="date"],
+form input[type="text"],
+form input[type="number"],
+form select,
+form textarea {
+  width: 100%; /* Full width */
+  padding: 10px; /* Add padding for comfort */
+  border: 1px solid #bdc3c7; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  justify-self: center;
+}
+
+/* Submit Button */
+form button {
+  width: 100%; /* Full width */
+  padding: 12px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* Mobile Styles */
+@media (max-width: 600px) {
+  main {
+    padding: 20px; /* Reduced padding */
+  }
+
+  header h1 {
+    font-size: 1.5em; /* Smaller header for mobile */
+  }
+
+  header nav a {
+    font-size: 0.9em; /* Smaller font size for mobile */
+  }
+
+  form input[type="text"],
+  form input[type="number"],
+  form select,
+  form textarea {
+    padding: 8px; /* Smaller padding for mobile */
+  }
+
+  form button {
+    padding: 10px; /* Smaller padding for mobile */
+  }
+}
+
+/* Section Titles */
+h2 {
+  font-size: 2em;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #ecf0f1;
+}
+
+.login-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px; /* Max width for larger screens */
+  text-align: center;
+}
+
+.login-box h1 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 600px) {
+  .login-box {
+    padding: 20px; /* Reduce padding for smaller screens */
+    width: 90%; /* Slightly smaller width for mobile screens */
+  }
+
+  .login-box input[type="text"],
+  .login-box input[type="password"] {
+    padding: 10px; /* Adjust padding for mobile */
+  }
+
+  .login-box button {
+    padding: 10px; /* Adjust padding for mobile */
+  }
+}
