@@ -23,7 +23,7 @@ async function fetchGoogleSheetData() {
 router.get('/', isAuthenticated, async (req, res) => {
     try {
       const username = req.session.username; // Retrieve the username
-      const googleSheetData = await Promise.all([getReceivedByOptions(), getAgreementOptions(), fetchTransactions()]); // Fetch options from Google Sheets and transactions
+      const googleSheetData = await Promise.all([getReceivedByOptions(), getAgreementOptions(), fetchTransactions(req.session.username)]); // Fetch options from Google Sheets and transactions
       res.render('accounts', {
         username,
         receivedByOptions: googleSheetData[0].receivedByOptions,

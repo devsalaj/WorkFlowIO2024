@@ -183,7 +183,7 @@ async function authorizeGoogleAPI() {
   }
 }
 
-async function fetchTransactions() {
+async function fetchTransactions(username) {
   try {
     const auth = new google.auth.JWT({
       email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -203,15 +203,21 @@ async function fetchTransactions() {
     const rows = response.data.values;
 
     if (rows.length) {
-      return rows.map(row => ({
-        date: row[0],
-        type: row[1],
-        amount: row[5],
-        party: row[3], // Assuming 'given_by' or 'received_by' based on your schema
-        agreement_id: row[7],
-        tax_bill: row[8],
-        remarks: row[6],
-      }));
+      return rows
+        .filter(row => {
+          const givenBy = row[3]; // Assuming 'given_by' is at index 3
+          const receivedBy = row[4]; // Assuming 'received_by' is at index 4
+          console.log("givenby: "+givenBy +"\n" +"receivedBy :" +receivedBy);
+          return givenBy === username || receivedBy === username;
+        })
+        .map(row => ({
+          
+          type: row[1],
+          party: row[3],
+          party2: row[4],          
+          amount: row[5],           
+          agreement_id: row[7]
+        }));
     } else {
       return [];
     }
@@ -220,6 +226,7 @@ async function fetchTransactions() {
     throw error; // Re-throw error to handle it in the calling function
   }
 }
+
 
 // Export functions
 module.exports = {
