@@ -1,7 +1,7 @@
 // routes/accounts.js
 const express = require('express');
 const router = express.Router();
-const { getAgreementOptions, getReceivedByOptions, fetchTransactions } = require('../utils/generalfunctions');
+const { getAgreementOptions, getReceivedByOptions, fetchTransactions, appendToGoogleSheet } = require('../utils/generalfunctions');
 const { google } = require('googleapis');
 const { GS_Accounts_transactions } = require('../utils/constants');
 require('dotenv').config();
