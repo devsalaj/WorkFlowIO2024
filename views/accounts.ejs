@@ -30,9 +30,9 @@
         <thead>
           <tr>
             <th>Date</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Given/Received By</th>
+            <th>Given By</th>
+            <th>Received By</th>
+            <th>Amount</th>            
             <th>Agreement ID</th>
             <th>Remarks</th>
           </tr>
@@ -42,16 +42,16 @@
             <% transactions.forEach(transaction => { %>
               <tr>
                 <td><%= transaction.date %></td>
-                <td><%= transaction.type %></td>
+                <td><%= transaction.givenby %></td>
+                <td><%= transaction.receivedby %></td>
                 <td><%= transaction.amount %></td>
-                <td><%= transaction.party %></td>
                 <td><%= transaction.agreement_id %></td>
                 <td><%= transaction.remarks %></td>
               </tr>
             <% }); %>
           <% } else { %>
             <tr>
-              <td colspan="7">No transactions available</td>
+              <td colspan="5">No transactions available</td>
             </tr>
           <% } %>
         </tbody>

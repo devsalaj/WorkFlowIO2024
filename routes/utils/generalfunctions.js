@@ -193,7 +193,7 @@ async function fetchTransactions(username) {
 
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = GS_Accounts_transactions.gs_Id; // Your spreadsheet ID
-    const range = 'INOUT_TRANSACTIONS!A:J'; // Adjust based on your sheet structure
+    const range = 'AppResponseAPI!A:F'; // Adjust based on your sheet structure
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -205,18 +205,19 @@ async function fetchTransactions(username) {
     if (rows.length) {
       return rows
         .filter(row => {
-          const givenBy = row[3]; // Assuming 'given_by' is at index 3
-          const receivedBy = row[4]; // Assuming 'received_by' is at index 4
+          const givenBy = row[1]; // Assuming 'given_by' is at index 3
+          const receivedBy = row[2]; // Assuming 'received_by' is at index 4
           console.log("givenby: "+givenBy +"\n" +"receivedBy :" +receivedBy);
           return givenBy === username || receivedBy === username;
         })
         .map(row => ({
           
-          type: row[1],
-          party: row[3],
-          party2: row[4],          
-          amount: row[5],           
-          agreement_id: row[7]
+          date: row[0],
+          givenby: row[1],
+          receivedby: row[2],          
+          amount: row[3],           
+          agreement_id: row[4],
+          remarks: row[5]
         }));
     } else {
       return [];
