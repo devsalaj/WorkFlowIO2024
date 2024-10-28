@@ -2,98 +2,89 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Marking</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Include your CSS file -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Marking</title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Include your CSS file -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 </head>
 
 <body>
-    <main>
-        <h2>Mark Your Attendance</h2>
+  <main>
+    <h2>Mark Your Attendance</h2>
 
-        <form id="attendance-form" action="/attendance/mark-attendance" method="POST">
-            <div class="sub-div-transaction-form">
-                <label for="agreement-id">Agreement ID:</label>
-                <select id="agreement-id" class="form-control" name="agreement_id" required>
-                    <option value="">Select Agreement ID</option>
-                    <% agreementOptions.forEach(function(option) { %>
-                        <option value="<%= option.id %>">
-                            <%= option.name %>
-                        </option>
-                        <% }); %>
-                </select>
-            </div>
+    <form id="attendance-form" action="/attendance/mark-attendance" method="POST">
+      <div class="sub-div-transaction-form">
+        <label for="agreement-id">Agreement ID:</label>
+        <select id="agreement-id" class="form-control" name="agreement_id" required>
+          <option value="">Select Agreement ID</option>
+          <% agreementOptions.forEach(function(option) { %>
+            <option value="<%= option.id %>">
+              <%= option.name %>
+            </option>
+            <% }); %>
+        </select>
+      </div>
 
-            <div class="sub-div-transaction-form">
-                <label for="location">Current Location:</label>
-                <input type="text" id="location" name="location" readonly required>
-            </div>
+      <div class="sub-div-transaction-form">
+        <label for="location">Current Location:</label>
+        <input type="text" id="location" name="location" readonly required>
+      </div>
 
-            <div class="sub-div-transaction-form">
-                <input type="hidden" id="current-time" name="current_time">
-            </div>
+      <div class="sub-div-transaction-form">
+        <input type="hidden" id="current-time" name="current_time">
+      </div>
 
-            <div class="sub-div-transaction-form">
-                <button type="submit" id="submit-button" disabled>Submit Attendance</button>
-            </div>
-        </form>
-    </main>
+      <div class="sub-div-transaction-form">
+        <button type="submit" id="submit-button" disabled>Submit Attendance</button>
+      </div>
+    </form>
+  </main>
 
-    <script>
-        $(document).ready(function() {
-          // Initialize Select2 for Agreement ID
-          $('#agreement-id').select2({
-            placeholder: "Select Agreement ID",
-            allowClear: true
-          });
-      
-          // Function to get location with explicit prompt
-          function getLocation() {
-            if (navigator.geolocation) {
-              // Explicitly prompt the user to grant location permission
-              navigator.geolocation.getCurrentPosition(
-                function(position) {
-                  const lat = position.coords.latitude;
-                  const long = position.coords.longitude;
-                  $('#location').val(`Latitude: ${lat}, Longitude: ${long}`);
-                  $('#submit-button').prop('disabled', false); // Enable the submit button
-                },
-                function(error) {
-                  switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                      alert("Location access denied by user. Please allow location access in your browser settings.");
-                      break;
-                    case error.POSITION_UNAVAILABLE:
-                      alert("Location information is unavailable. Please check your device location settings.");
-                      break;
-                    case error.TIMEOUT:
-                      alert("The request to get your location timed out. Please try again.");
-                      break;
-                    case error.UNKNOWN_ERROR:
-                      alert("An unknown error occurred while trying to fetch your location.");
-                      break;
-                  }
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Request high accuracy for better results
-              );
-            } else {
-              alert("Geolocation is not supported by your browser. Please use a supported browser.");
+  <script>
+    $(document).ready(function () {
+      // Initialize Select2 for Agreement ID
+      $('#agreement-id').select2({
+        placeholder: "Select Agreement ID",
+        allowClear: true
+      });
+
+      // Function to get location
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const lat = position.coords.latitude;
+              const long = position.coords.longitude;
+              $('#location').val(`Latitude: ${lat}, Longitude: ${long}`);
+              $('#submit-button').prop('disabled', false); // Enable the submit button
+            },
+            function (error) {
+              console.warn('Geolocation is not available or was denied:', error);
+              $('#location').val('Location not available');
+              $('#submit-button').prop('disabled', false); // Still enable the submit button
+              alert("Location could not be retrieved. You can still submit attendance without location.");
             }
-          }
-      
-          // Request location access when the form loads
-          getLocation();
-      
-          // Set current time in the hidden input field
-          const currentTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false });
-          $('#current-time').val(currentTime);
-        });
-      </script>
-      
+          );
+        } else {
+          alert("Geolocation is not supported by this browser.");
+          $('#location').val('Location not available');
+          $('#submit-button').prop('disabled', false); // Still enable the submit button
+        }
+      }
+
+      // Request location access
+      getLocation();
+
+      // Set current time
+      const currentTime = new Date().toISOString();
+      $('#current-time').val(currentTime);
+    });
+  </script>
+
+
 </body>
 
 </html>

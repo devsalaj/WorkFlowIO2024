@@ -23,18 +23,19 @@ router.get('/mark-attendance', isAuthenticated, async (req, res) => {
   res.render('mark-attendance', { username, agreementOptions });
 });
 
-// POST route to handle attendance submission
+/// POST route to handle attendance submission
 router.post('/mark-attendance', isAuthenticated, async (req, res) => {
   const { agreement_id, location, current_time } = req.body;
 
-  // Save attendance information (you'll need to implement saveAttendance)
+  // Save attendance information (with or without location)
   try {
-    await saveAttendance(req.session.username, agreement_id, location, current_time);
+    await saveAttendance(req.session.username, agreement_id, location || 'Not available', current_time);
     res.redirect('/administration');
   } catch (error) {
     console.error('Error saving attendance:', error);
     res.status(500).send('Error marking attendance');
   }
 });
+
 
 module.exports = router;
