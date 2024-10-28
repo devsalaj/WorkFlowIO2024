@@ -42,10 +42,15 @@ async function getAgreementOptions() {
 }
 // Function to get received by options from Google Sheets
 async function getReceivedByOptions() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: process.env.GOOGLE_KEY_FILE,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-  });
+  const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY } = process.env;
+
+  // Create a JWT client with the credentials from the environment variables
+  const auth = new google.auth.JWT(
+    GOOGLE_CLIENT_EMAIL,
+    null,
+    GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Replace escaped newlines in the private key
+    ['https://www.googleapis.com/auth/spreadsheets.readonly']
+  );
 
   const sheets = google.sheets({ version: 'v4', auth });
 
@@ -63,7 +68,7 @@ async function getReceivedByOptions() {
     if (rows.length) {
       return rows.map(row => ({
         name: row[0],
-        id: row[1] || row[0]
+        id: row[1] || row[0],
       }));
     } else {
       console.log('No data found.');
