@@ -223,3 +223,107 @@ h2 {
     padding: 10px; /* Adjust padding for mobile */
   }
 }
+
+/* Styles for Navigation Buttons */
+.navigation {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.navigation h2 {
+  margin-bottom: 15px;
+}
+
+.navigation ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.navigation li {
+  display: inline-block;
+  margin: 10px;
+}
+
+.nav-button {
+  padding: 12px 20px; /* Padding for buttons */
+  background-color: #007BFF; /* Primary button color */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Cursor pointer */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.nav-button:hover {
+  background-color: #0056b3; /* Darker blue for hover effect */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+.nav-button i {
+  margin-right: 8px; /* Space between icon and text */
+}
+
+.button-container {
+  margin-bottom: 20px; /* Add space between buttons */
+}
+
+.dash-button {
+  display: inline-block; /* Make buttons inline */
+  padding: 12px 24px; /* Padding for button */
+  background-color: #2679e6; /* Green background color */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  border-radius: 6px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  text-align: center; /* Center text */
+  text-decoration: none; /* Remove underline from links */
+  transition: background-color 0.3s ease, transform 0.2s; /* Smooth transitions */
+}
+
+.dash-button:hover {
+  background-color: #4b8ce0; /* Darker green on hover */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  color: #e6dbdb; /* Text color */
+}
+
+.dash-button i {
+  margin-right: 8px; /* Spacing between icon and text */
+}
+
+/* Styles for the transactions table */
+.latest-transactions {
+  margin-top: 20px; /* Space above the transactions section */
+}
+
+.latest-transactions table {
+  width: 100%; /* Full width */
+  border-collapse: collapse; /* Collapse borders to avoid double borders */
+  margin: 20px 0; /* Margin around the table */
+}
+
+.latest-transactions th,
+.latest-transactions td {
+  border: 1px solid #ddd; /* Light gray border */
+  padding: 10px; /* Padding inside cells */
+  text-align: left; /* Align text to the left */
+}
+
+/* Alternating row colors */
+.latest-transactions tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Light gray for even rows */
+}
+
+.latest-transactions tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* White for odd rows */
+}
+
+.latest-transactions th {
+  background-color: #2c3e50; /* Header background color */
+  color: white; /* Header text color */
+  font-weight: bold; /* Bold text for headers */
+}
+
+.latest-transactions tbody tr:hover {
+  background-color: #f1c40f; /* Highlight color on hover */
+}

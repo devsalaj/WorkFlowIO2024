@@ -2,16 +2,17 @@
 const express = require('express');
 const router = express.Router();
 const { getAgreementOptions, getReceivedByOptions, fetchTransactions, appendToGoogleSheet } = require('../utils/generalfunctions');
-const { google } = require('googleapis');
 const { GS_Accounts_transactions } = require('../utils/constants');
 require('dotenv').config();
-const { isAuthenticated } = require('../../middlewares/authMiddleware'); // Ensure this path is correct
+const { isAuthenticated } = require('../../middlewares/authMiddleware');
 
-// Helper function to fetch data from Google Sheets
+// Helper function to fetch Google Sheets data
 async function fetchGoogleSheetData() {
     try {
-        const receivedByOptions = await getReceivedByOptions();
-        const agreementOptions = await getAgreementOptions();
+        const [receivedByOptions, agreementOptions] = await Promise.all([
+            getReceivedByOptions(),
+            getAgreementOptions(),
+        ]);
         return { receivedByOptions, agreementOptions };
     } catch (error) {
         console.error('Error fetching Google Sheet data:', error);
@@ -19,32 +20,36 @@ async function fetchGoogleSheetData() {
     }
 }
 
-// GET route to render the accounts page
+// Route to render the accounts page
 router.get('/', isAuthenticated, async (req, res) => {
     try {
-      const username = req.session.username; // Retrieve the username
-      const googleSheetData = await Promise.all([getReceivedByOptions(), getAgreementOptions(), fetchTransactions(req.session.username)]); // Fetch options from Google Sheets and transactions
-      res.render('accounts', {
-        username,
-        receivedByOptions: googleSheetData[0].receivedByOptions,
-        agreementOptions: googleSheetData[1].agreementOptions,
-        transactions: googleSheetData[2] // Pass transactions to the view
-      });
-    } catch (error) {
-      console.error('Error rendering accounts page:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
-
-// Route for rendering the enter transaction page
-router.get('/enter-transaction', async (req, res) => {
-    try {
-        const username = req.session.username || 'defaultUser';
-        const googleSheetData = await fetchGoogleSheetData();
-        res.render('enter-transaction', {
+        const username = req.session.username;
+        const [receivedByOptions, agreementOptions, transactions] = await Promise.all([
+            getReceivedByOptions(),
+            getAgreementOptions(),
+            fetchTransactions(username),
+        ]);
+        res.render('./accounts/accounts', {
             username,
-            receivedByOptions: googleSheetData.receivedByOptions,
-            agreementOptions: googleSheetData.agreementOptions
+            receivedByOptions,
+            agreementOptions,
+            transactions,
+        });
+    } catch (error) {
+        console.error('Error rendering accounts page:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Route to render the enter transaction page
+router.get('/enter-transaction', isAuthenticated, async (req, res) => {
+    try {
+        const username = req.session.username;
+        const { receivedByOptions, agreementOptions } = await fetchGoogleSheetData();
+        res.render('./accounts/enter-transaction', {
+            username,
+            receivedByOptions,
+            agreementOptions,
         });
     } catch (error) {
         console.error('Error rendering enter transaction page:', error);
@@ -52,8 +57,8 @@ router.get('/enter-transaction', async (req, res) => {
     }
 });
 
-// POST route for submitting the transaction
-router.post('/submit-transaction', async (req, res) => {
+// POST route for submitting a transaction
+router.post('/submit-transaction', isAuthenticated, async (req, res) => {
     const transactionData = {
         timestamp: new Date().toISOString(),
         transaction_date: req.body.transaction_date,
@@ -90,6 +95,5 @@ router.post('/submit-transaction', async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to submit transaction.' });
     }
 });
-
 
 module.exports = router;

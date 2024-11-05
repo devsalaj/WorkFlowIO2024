@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 require('dotenv').config();
 const session = require('express-session');
+const expressLayouts = require('express-ejs-layouts');
 
 // Load routes
 const attendanceRoutes = require('./routes/administration-routes/attendance'); // Updated path
@@ -24,9 +25,13 @@ app.use(session({
 // Set EJS as the template engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('layout', 'layout'); // This will look for a layout.ejs in the views folder
+
+
 
 // Middleware to serve static files (CSS)
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(expressLayouts); // Use express-ejs-layouts
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
@@ -48,7 +53,7 @@ function isAuthenticated(req, res, next) {
 
 // GET route to render the login page
 app.get('/login', (req, res) => {
-  res.render('login', { errorMessage: null });
+  res.render('login', { title: 'Login', errorMessage: null }); // Pass title to the login page
 });
 
 // POST route to handle login form submission
@@ -82,7 +87,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/dashboard', isAuthenticated, (req, res) => {
   const username = req.session.username;
-  res.render('dashboard', { username });
+  res.render('dashboard', { title: 'Dashboard', username });
 });
 
 const { google } = require('googleapis');

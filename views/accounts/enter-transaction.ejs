@@ -1,0 +1,171 @@
+<% title = "Enter Transaction" %>
+<%- include('../partials/header') %> <!-- Include your header -->
+
+<main>
+  <h2>Enter a Transaction</h2>
+
+  <!-- Transaction Form -->
+  <form action="/accounts/submit-transaction" method="POST" id="transaction-form">
+    <div class="sub-div-transaction-form">
+      <label for="transaction-date">Transaction Date:</label>
+      <input type="date" id="transaction-date" name="transaction_date" required>
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="transaction-type">Transaction Type:</label>
+      <select id="transaction-type" name="transaction_type" required>
+        <option value="">Select...</option>
+        <option value="IN">Incoming</option>
+        <option value="OUT">Outgoing</option>
+      </select>
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="tax-bill">Tax Bill Available:</label>
+      <select id="tax-bill" name="tax_bill" required>
+        <option value="YES">Yes</option>
+        <option value="NO">No</option>
+      </select>
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="given-by-field">Given By:</label>
+      <select id="given-by-field" name="given_by" required>
+        <option value="">Select...</option>
+        <% receivedByOptions.forEach(option => { %>
+          <option value="<%= option.id %>"><%= option.name %></option>
+        <% }) %>
+      </select>
+      <input type="hidden" id="hidden-given-by" name="given_by">
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="received-by-field">Received By:</label>
+      <select id="received-by-field" name="received_by" required>
+        <option value="">Select...</option>
+        <% receivedByOptions.forEach(option => { %>
+          <option value="<%= option.id %>"><%= option.name %></option>
+        <% }) %>
+      </select>
+      <input type="hidden" id="hidden-received-by" name="received_by">
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="agreement-id-field">Agreement ID:</label>
+      <select id="agreement-id-field" name="agreement_id" required>
+        <option value="">Select...</option>
+        <% agreementOptions.forEach(option => { %>
+          <option value="<%= option.id %>"><%= option.id %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="amount">Amount:</label>
+      <input type="number" id="amount" name="amount" required>
+    </div>
+
+    <div class="sub-div-transaction-form">
+      <label for="remarks">Remarks:</label>
+      <textarea id="remarks" name="remarks"></textarea>
+    </div>
+
+    <button type="submit">Submit Transaction</button>
+  </form>
+</main>
+
+<%- include('../partials/footer') %> <!-- Include your footer -->
+
+<!-- External JS libraries for Select2 and jQuery -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    const today = new Date();
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(today.getDate() - 10);
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    $('#transaction-date').attr('min', formatDate(tenDaysAgo));
+    $('#transaction-date').attr('max', formatDate(today));
+
+    const username = "<%= username %>";
+    $('#given-by-field, #received-by-field, #agreement-id-field').select2({
+      placeholder: 'Select an option',
+      tags: true
+    });
+
+    $('#transaction-type').change(function () {
+      const transactionType = $(this).val();
+      const givenByField = $('#given-by-field');
+      const receivedByField = $('#received-by-field');
+      const hiddenGivenBy = $('#hidden-given-by');
+      const hiddenReceivedBy = $('#hidden-received-by');
+
+      givenByField.val('').trigger('change');
+      receivedByField.val('').trigger('change');
+
+      if (transactionType === 'OUT') {
+        givenByField.append(new Option(username, username, true, true)).trigger('change');
+        givenByField.prop('disabled', true);
+        hiddenGivenBy.val(username);
+        receivedByField.prop('disabled', false);
+        hiddenReceivedBy.val('');
+      } else if (transactionType === 'IN') {
+        receivedByField.append(new Option(username, username, true, true)).trigger('change');
+        receivedByField.prop('disabled', true);
+        hiddenReceivedBy.val(username);
+        givenByField.prop('disabled', false);
+        hiddenGivenBy.val('');
+      } else {
+        givenByField.prop('disabled', false);
+        receivedByField.prop('disabled', false);
+        hiddenGivenBy.val('');
+        hiddenReceivedBy.val('');
+      }
+    });
+
+    // Combined form submission handler with loader logic
+    $('#transaction-form').on('submit', function (event) {
+      event.preventDefault();
+
+      // Show loader before sending the AJAX request
+      document.getElementById('loader').style.display = 'flex';
+
+      const formData = $(this).serialize();
+
+      $.post('/accounts/submit-transaction', formData, function (response) {
+        if (response.success) {
+          alert(response.message);
+
+          // Hide loader on success
+          document.getElementById('loader').style.display = 'none';
+
+          // Clear the form fields and reset Select2 dropdowns
+          $('#transaction-form')[0].reset();
+          $('#given-by-field').val(null).trigger('change');
+          $('#received-by-field').val(null).trigger('change');
+          $('#agreement-id-field').val(null).trigger('change');
+        } else {
+          alert('Error: ' + response.message);
+          
+          // Hide loader on error
+          document.getElementById('loader').style.display = 'none';
+        }
+      }).fail(function () {
+        alert('Error: Unable to submit transaction. Please try again later.');
+        
+        // Hide loader on failure
+        document.getElementById('loader').style.display = 'none';
+      });
+    });
+  });
+</script>

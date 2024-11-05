@@ -1,34 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administration Dashboard</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <h1>Administration Dashboard - Welcome, <%= username %>!</h1>
-    <nav>
-      <a href="/logout">Logout</a>
-      <a href="/dashboard">Back to Dashboard</a>
-    </nav>
-  </header>
+<%- include('partials/header') %> <!-- Include your header here -->
 
-  <main>
+<main>
     <section class="navigation">
-      <h2>Administration Options:</h2>
-      <ul>
-        <li><a href="/administration/mark-attendance">Mark My Attendance</a></li>
-        <li><a href="/administration/view-attendance">View My Attendance (for the Month)</a></li>
-        <li><a href="/administration/apply-leave">Apply for a Leave</a></li>
-        <li><a href="/administration/company-terms">Company Terms and Conditions of Work</a></li>
-      </ul>
+        <h2>Administration Options:</h2>
+        <div class="button-container">
+            <button onclick="navigateWithLoader('/administration/mark-attendance')" class="nav-button">Mark My Attendance</button>
+        </div>
+        <div class="button-container">
+            <button onclick="navigateWithLoader('/administration/view-attendance')" class="nav-button">View My Attendance (for the Month)</button>
+        </div>
+        <div class="button-container">
+            <button onclick="navigateWithLoader('/administration/apply-leave')" class="nav-button">Apply for a Leave</button>
+        </div>
+        <div class="button-container">
+            <button onclick="navigateWithLoader('/administration/company-terms')" class="nav-button">Company Terms and Conditions of Work</button>
+        </div>
     </section>
-  </main>
+</main>
 
-  <footer>
-    <p>&copy; 2024 WorkFlowIO. All Rights Reserved.</p>
-  </footer>
-</body>
-</html>
+<%- include('partials/footer') %> <!-- Include your footer here -->

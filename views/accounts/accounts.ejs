@@ -1,0 +1,70 @@
+<% title="Accounts Section" %>
+  <%- include('../partials/header') %> <!-- Include your header here -->
+    <main>
+      <h2>Accounts Overview</h2>
+
+      <!-- Button to redirect to Enter a Transaction -->
+      <div class="button-container">
+        <button onclick="navigateWithLoader('/accounts/enter-transaction')" class="nav-button">Enter a
+          Transaction</button>
+      </div>
+
+      <!-- Section for displaying Latest Transactions -->
+      <section class="latest-transactions">
+        <h3>Latest Transactions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Given By</th>
+              <th>Received By</th>
+              <th>Amount</th>
+              <th>Agreement ID</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (transactions.length> 0) { %>
+              <% transactions.forEach(transaction=> { %>
+                <tr>
+                  <td>
+                    <%= transaction.date %>
+                  </td>
+                  <td>
+                    <%= transaction.givenby %>
+                  </td>
+                  <td>
+                    <%= transaction.receivedby %>
+                  </td>
+                  <td>
+                    <%= transaction.amount %>
+                  </td>
+                  <td>
+                    <%= transaction.agreement_id %>
+                  </td>
+                  <td>
+                    <%= transaction.remarks %>
+                  </td>
+                </tr>
+                <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="6">No transactions available</td>
+                    </tr>
+                    <% } %>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+
+    <script>
+      // Function to show loader and navigate
+      function navigateWithLoader(url) {
+        document.getElementById('loader').style.display = 'flex';
+        setTimeout(() => {
+          window.location.href = url;
+        }, 300);
+      }
+    </script>
+<%- include('../partials/footer') %> <!-- Include your header here -->
