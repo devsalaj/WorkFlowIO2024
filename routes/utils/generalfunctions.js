@@ -183,7 +183,7 @@ async function authorizeGoogleAPI() {
   }
 }
 
-async function fetchTransactions(username) {
+async function fetchTransactions() {
   try {
     const auth = new google.auth.JWT({
       email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -202,23 +202,15 @@ async function fetchTransactions(username) {
 
     const rows = response.data.values;
 
-    if (rows.length) {
-      return rows
-        .filter(row => {
-          const givenBy = row[1]; // Assuming 'given_by' is at index 3
-          const receivedBy = row[2]; // Assuming 'received_by' is at index 4
-          console.log("givenby: "+givenBy +"\n" +"receivedBy :" +receivedBy);
-          return givenBy === username || receivedBy === username;
-        })
-        .map(row => ({
-          
-          date: row[0],
-          givenby: row[1],
-          receivedby: row[2],          
-          amount: row[3],           
-          agreement_id: row[4],
-          remarks: row[5]
-        }));
+    if (rows && rows.length > 0) {
+      return rows.map(row => ({
+        date: row[0],
+        givenby: row[1],
+        receivedby: row[2],
+        amount: row[3],
+        agreement_id: row[4],
+        remarks: row[5],
+      }));
     } else {
       return [];
     }
@@ -226,6 +218,15 @@ async function fetchTransactions(username) {
     console.error('Error fetching transactions:', error);
     throw error; // Re-throw error to handle it in the calling function
   }
+}
+
+// utils/generalfunctions.js
+function filterTransactionsByUsername(transactions, username) {
+  return transactions.filter(transaction => {
+    const { givenby, receivedby } = transaction;
+    console.log("givenby:", givenby, "receivedBy:", receivedby);
+    return givenby === username || receivedby === username;
+  });
 }
 
 
@@ -237,6 +238,7 @@ module.exports = {
   validateCredentials,
   saveAttendance,
   appendToGoogleSheet,
-  fetchTransactions
+  fetchTransactions,
+  filterTransactionsByUsername
   // Add other functions as needed
 };

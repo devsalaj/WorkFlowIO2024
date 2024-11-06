@@ -1,38 +1,56 @@
 // routes/accounts.js
 const express = require('express');
 const router = express.Router();
-const { getAgreementOptions, getReceivedByOptions, fetchTransactions, appendToGoogleSheet } = require('../utils/generalfunctions');
+const { getAgreementOptions, getReceivedByOptions, fetchTransactions, appendToGoogleSheet, filterTransactionsByUsername } = require('../utils/generalfunctions');
 const { GS_Accounts_transactions } = require('../utils/constants');
 require('dotenv').config();
 const { isAuthenticated } = require('../../middlewares/authMiddleware');
 
-// Helper function to fetch Google Sheets data
-async function fetchGoogleSheetData() {
+let cachedData = {
+    receivedByOptions: [],
+    agreementOptions: [],
+    transactionsOptions:[],
+    
+};
+
+// Background function to update Google Sheets data
+async function updateGoogleSheetData() {
+    
     try {
-        const [receivedByOptions, agreementOptions] = await Promise.all([
+        const [receivedByOptions, agreementOptions, transactionsOptions] = await Promise.all([
             getReceivedByOptions(),
             getAgreementOptions(),
+            fetchTransactions(),
         ]);
-        return { receivedByOptions, agreementOptions };
+        // Update the cached data
+        cachedData.receivedByOptions = receivedByOptions;
+        cachedData.agreementOptions = agreementOptions;
+        cachedData.transactionsOptions= transactionsOptions
+        console.log('Google Sheets data updated successfully.');
     } catch (error) {
-        console.error('Error fetching Google Sheet data:', error);
-        return { receivedByOptions: [], agreementOptions: [] }; // Return empty arrays on error
+        console.error('Error updating Google Sheets data:', error);
     }
 }
+
+
+
+// Set an interval to update the data every hour (3600000 ms)
+setInterval(updateGoogleSheetData, 3600000);
+
+// Initial data load when the server starts
+updateGoogleSheetData();
 
 // Route to render the accounts page
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const username = req.session.username;
-        const [receivedByOptions, agreementOptions, transactions] = await Promise.all([
-            getReceivedByOptions(),
-            getAgreementOptions(),
-            fetchTransactions(username),
-        ]);
+        console.log("username : "+username);
+        const transactions = filterTransactionsByUsername(cachedData.transactionsOptions,username);
+
         res.render('./accounts/accounts', {
             username,
-            receivedByOptions,
-            agreementOptions,
+            receivedByOptions: cachedData.receivedByOptions,
+            agreementOptions: cachedData.agreementOptions,
             transactions,
         });
     } catch (error) {
@@ -42,14 +60,14 @@ router.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Route to render the enter transaction page
-router.get('/enter-transaction', isAuthenticated, async (req, res) => {
+router.get('/enter-transaction', isAuthenticated, (req, res) => {
     try {
         const username = req.session.username;
-        const { receivedByOptions, agreementOptions } = await fetchGoogleSheetData();
+
         res.render('./accounts/enter-transaction', {
             username,
-            receivedByOptions,
-            agreementOptions,
+            receivedByOptions: cachedData.receivedByOptions,
+            agreementOptions: cachedData.agreementOptions,
         });
     } catch (error) {
         console.error('Error rendering enter transaction page:', error);
