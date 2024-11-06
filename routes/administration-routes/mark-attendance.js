@@ -13,18 +13,18 @@ function isAuthenticated(req, res, next) {
 }
 
 // GET route to render attendance marking form
-router.get('/mark-attendance', isAuthenticated, async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   const username = req.session.username;
 
   // Fetch agreement options from Google Sheets or another source
   const agreementOptions = await getAgreementOptions();
 
   // Render the attendance marking page with the fetched options
-  res.render('mark-attendance', { username, agreementOptions });
+  res.render('administration/mark-attendance', { title: 'Mark Attendance',username, agreementOptions });
 });
 
 /// POST route to handle attendance submission
-router.post('/mark-attendance', isAuthenticated, async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   const { agreement_id, location, current_time } = req.body;
 
   // Save attendance information (with or without location)

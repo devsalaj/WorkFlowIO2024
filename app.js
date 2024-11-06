@@ -6,7 +6,7 @@ const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
 
 // Load routes
-const attendanceRoutes = require('./routes/administration-routes/attendance'); // Updated path
+const attendanceRoutes = require('./routes/administration-routes/mark-attendance'); // Updated path
 const administrationRoutes = require('./routes/administration-routes/administration'); // Updated path
 const accountsRoutes = require('./routes/accounts-routes/accounts'); // Load accounts routes
 const { getAgreementOptions, getReceivedByOptions,validateCredentials } = require('./routes/utils/generalfunctions'); // Load functions
@@ -38,7 +38,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Mount the routes
-app.use('/attendance', attendanceRoutes);
+//app.use('/administration/attendance', attendanceRoutes);
 app.use('/administration', administrationRoutes);
 app.use('/accounts', accountsRoutes); // This will handle routes prefixed with /accounts
 
